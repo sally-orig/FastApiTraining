@@ -33,7 +33,7 @@ class VegetableUseCase:
     def create_vegetable(self, vegetable_data: VegetableCreate) -> VegetableResponse:
         try:    
             vegetable_action = VegetableAction(
-                tran_type=VegetableTransactionType.add_vegetable,
+                tran_type=VegetableTransactionType.add_vegetable.name,
                 vegetable_name=vegetable_data.name,
                 created_at=datetime.now(),
                 details=f"Vegetable created: {vegetable_data.name}",
@@ -73,7 +73,7 @@ class VegetableUseCase:
         vegetable = self.get_vegetable_by_id(vegetable_id)
         try:
             vegetable_action = VegetableAction(
-                tran_type=VegetableTransactionType.update_price,
+                tran_type=VegetableTransactionType.update_price.name,
                 vegetable_name=vegetable.name,
                 created_at=datetime.now(),
                 details=f"Vegetable price updated: {vegetable.name}",
@@ -99,7 +99,7 @@ class VegetableUseCase:
         vegetable = self.get_vegetable_by_id(vegetable_id)
         try:
             vegetable_action = VegetableAction(
-                tran_type=VegetableTransactionType.deactivate_vegetable,
+                tran_type=VegetableTransactionType.deactivate_vegetable.name,
                 vegetable_name=vegetable.name,
                 created_at=datetime.now(),
                 details=f"Vegetable deactivated: {vegetable.name}",
