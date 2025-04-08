@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from PriceMonitor.api.vegetable import router as vegetable_router
+from PriceMonitor.api.vegetable_action import router as vegetable_action_router
 
 app = FastAPI()
 
-app.include_router(vegetable_router, prefix="/vegetable", tags=["vegetable"])
+app.include_router(vegetable_router, prefix="/vegetables", tags=["Vegetables"])
+app.include_router(vegetable_action_router, prefix="/vegetable-actions", tags=["Vegetable Actions"])

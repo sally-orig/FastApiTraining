@@ -9,20 +9,21 @@ class VegetableTransactionType(str, Enum):
     deactivate_vegetable = "Deactivate Vegetable"
 
 class VegetableActionBase(BaseModel):
+    tran_type: VegetableTransactionType
+    vegetable_name: str
+    price: Decimal = Field(gt=0.01, decimal_places=2, max_digits=10)
+    details: str
+    created_by: str
     created_at: datetime
 
     class Config:
         from_attributes = True
 
-class VegetableView(VegetableActionBase):
+class VegetableActionView(VegetableActionBase):
     id: int
-    tran_type: VegetableTransactionType
-    vegetable_name: str
-    details: str
-    price: Decimal = Field(gt=0.01, decimal_places=2, max_digits=10)
-    created_by: str
+    tran_type: str
 
-class VegetableActionResponse(VegetableActionBase):
+class VegetableActionResponse(BaseModel):
     id: int
 
     class Config:

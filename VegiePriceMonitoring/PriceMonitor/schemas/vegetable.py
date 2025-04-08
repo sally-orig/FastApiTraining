@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from decimal import Decimal
-from .vegetable_action import VegetableActionBase
 
 class VegetableBase(BaseModel):
     name: str
