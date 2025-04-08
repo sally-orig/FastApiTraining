@@ -4,7 +4,7 @@ from fastapi import status
 from pathlib import Path
 from ..core.db import get_db
 from ..core.models import Vegetable, VegetableAction
-from ..schemas.vegetable import VegetableCreate, VegetableView, VegetableResponse, VegetableUpdate
+from ..schemas.vegetable import VegetableCreate, VegetableView, VegetableResponse, VegetableUpdate, VegetableDeactivate
 from ..use_cases.vegetable import VegetableUseCase
 
 
@@ -35,6 +35,11 @@ async def create_vegetable(vegetable_data: VegetableCreate, use_case: VegetableU
 @router.put("/vegetables/{vegetable_id}", response_model=VegetableResponse, status_code=status.HTTP_200_OK)
 async def update_vegetable(vegetable_id: int, vegetable_data: VegetableUpdate, use_case: VegetableUseCase = Depends(get_use_case)):  
     vegetable = use_case.update_vegetable(vegetable_id, vegetable_data)
+    return vegetable
+
+@router.delete("/vegetables/{vegetable_id}", response_model=VegetableResponse, status_code=status.HTTP_200_OK)
+async def deactivate_vegetable(vegetable_id: int, vegetable_data: VegetableDeactivate, use_case: VegetableUseCase = Depends(get_use_case)):  
+    vegetable = use_case.deactivate_vegetable(vegetable_id, vegetable_data)
     return vegetable
     
     

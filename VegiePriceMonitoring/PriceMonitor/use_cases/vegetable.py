@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from fastapi import HTTPException
 from ..core.models import Vegetable, VegetableAction
-from ..schemas.vegetable import VegetableCreate, VegetableView, VegetableResponse, VegetableUpdate
+from ..schemas.vegetable import VegetableCreate, VegetableView, VegetableResponse, VegetableUpdate, VegetableDeactivate
 from ..schemas.vegetable_action import VegetableTransactionType
 
 class VegetableUseCase:
@@ -36,7 +36,7 @@ class VegetableUseCase:
                 tran_type=VegetableTransactionType.add_vegetable,
                 vegetable_name=vegetable_data.name,
                 created_at=datetime.now(),
-                details="Vegetable created",
+                details=f"Vegetable created: {vegetable_data.name}",
                 price=vegetable_data.price,
                 created_by=vegetable_data.created_by,
             )
@@ -62,18 +62,21 @@ class VegetableUseCase:
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500, detail=f"Error creating vegetable: {str(e)}")
-    
-    def update_vegetable(self, vegetable_id: int, vegetable_data: VegetableUpdate) -> VegetableResponse:   
+        
+    def get_vegetable_by_id(self, vegetable_id: int) -> Vegetable:
         vegetable = self.db.query(Vegetable).filter(Vegetable.id == vegetable_id).first()
         if not vegetable:
             raise HTTPException(status_code=404, detail="Vegetable not found")
-        
+        return vegetable
+    
+    def update_vegetable(self, vegetable_id: int, vegetable_data: VegetableUpdate) -> VegetableResponse:   
+        vegetable = self.get_vegetable_by_id(vegetable_id)
         try:
             vegetable_action = VegetableAction(
                 tran_type=VegetableTransactionType.update_price,
                 vegetable_name=vegetable.name,
                 created_at=datetime.now(),
-                details="Vegetable price updated",
+                details=f"Vegetable price updated: {vegetable.name}",
                 price=vegetable_data.price,
                 created_by=vegetable_data.updated_by,
             )
@@ -88,8 +91,31 @@ class VegetableUseCase:
             self.db.refresh(vegetable)
 
             return VegetableResponse(id=vegetable.id)
-        except HTTPException:
-            raise
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500, detail=f"Error updating vegetable: {str(e)}")
+        
+    def deactivate_vegetable(self, vegetable_id: int, vegetable_data: VegetableDeactivate) -> VegetableResponse:
+        vegetable = self.get_vegetable_by_id(vegetable_id)
+        try:
+            vegetable_action = VegetableAction(
+                tran_type=VegetableTransactionType.deactivate_vegetable,
+                vegetable_name=vegetable.name,
+                created_at=datetime.now(),
+                details=f"Vegetable deactivated: {vegetable.name}",
+                price=vegetable.price,
+                created_by=vegetable_data.updated_by,
+            )
+            self.db.add(vegetable_action)
+            self.db.commit()
+            self.db.refresh(vegetable_action)
+
+            vegetable.status = False
+            vegetable.tran_id_id = vegetable_action.id
+            self.db.commit()
+            self.db.refresh(vegetable)
+
+            return VegetableResponse(id=vegetable.id)
+        except Exception as e:
+            self.db.rollback()
+            raise HTTPException(status_code=500, detail=f"Error deactivating vegetable: {str(e)}")

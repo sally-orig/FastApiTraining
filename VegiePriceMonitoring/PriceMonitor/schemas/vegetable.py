@@ -27,3 +27,6 @@ class VegetableUpdate(BaseModel):
     price: Decimal = Field(gt=0.01, decimal_places=2, max_digits=10)
     description: str | None = None
     updated_by: str
+
+class VegetableDeactivate(BaseModel):
+    updated_by: str
