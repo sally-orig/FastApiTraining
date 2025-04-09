@@ -38,14 +38,14 @@ class VegetablePriceChartUseCase:
 
         for update in price_updates:
             date_obj = datetime.strptime(update[0], "%Y-%m-%d")
-            formatted_date = date_obj.strftime("%b-%d-%Y")
+            formatted_date = date_obj.strftime("%b %d %Y")
             dates.append(formatted_date)
             prices.append(float(update[1]))
             if update.average_price > max_price:
                 max_price = update.average_price
 
-        highest_price = max(prices, default=0)
-        lowest_price = min(prices, default=0)
+        highest_price = {"average_price": max(prices, default=0), "date": dates[prices.index(max(prices))]} if prices else {}
+        lowest_price = {"average_price": min(prices, default=0), "date": dates[prices.index(min(prices))]} if prices else {}
 
         return VegetablePriceChartView(
             vegetable_name=selected_vegetable,

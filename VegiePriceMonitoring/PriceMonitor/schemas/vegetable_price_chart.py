@@ -1,16 +1,15 @@
 from pydantic import BaseModel, Field
-from datetime import date
+from typing import Any
 from decimal import Decimal
 
 class VegetablePriceChartBase(BaseModel):
     dates: list[str]
     prices: list[Decimal]
-    highest_price: Decimal
-    lowest_price: Decimal
-    max_price: Decimal
 
     class Config:
         from_attributes = True
 
 class VegetablePriceChartView(VegetablePriceChartBase):
-    pass
+    highest_price: dict[Any, Any] = Field(description="Highest price and date")
+    lowest_price: dict[Any, Any] = Field(description="Lowest price and date")
+    max_price: Decimal

@@ -29,6 +29,9 @@ class VegetableUseCase:
         result = self.db.query(Vegetable).filter(Vegetable.name.ilike(f"%{query}%"), Vegetable.status == True).order_by(Vegetable.name).all()
         result = [self.generate_vegetable_view(veg) for veg in result]
         return result
+    
+    def get_vegetable_action_types(self) -> list[str]:
+        return [action_type.name for action_type in VegetableTransactionType]
 
     def create_vegetable(self, vegetable_data: VegetableCreate) -> VegetableResponse:
         try:    
